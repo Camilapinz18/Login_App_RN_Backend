@@ -2,7 +2,7 @@ const express = require('express')
 //Se conecta a la bd:
 require('./config/db')
 const app = express()
-const PORT = 3000
+const PORT = process.env.PORT || 3000
 const bcrypt = require('bcrypt')
 const bodyParser = require('express').json()
 app.use(bodyParser)
@@ -16,6 +16,14 @@ app.use(bodyParser)
 /********************************* */
 
 const User = require('./models/user')
+
+app.get('/', (request, response) => {
+  User.find({}).then(users => {
+    response.json({
+      alert: `There are ${users.length} users registered`
+    })
+  })
+})
 
 app.get('/api/users', (request, response) => {
   User.find({}).then(users => {
@@ -115,32 +123,34 @@ app.post('/api/users/signin', (request, response) => {
       message: 'Empty input fields!'
     })
   } else {
-    User.find({ email }).then(result => {
-      if (result.length) {
-        //COMPROBAR CONTRASEÑA:
-        const hashedPassword = result[0].password
-        bcrypt.compare(password, hashedPassword).then(result => {
-          if (result) {
-            response.json({
-              status: 'OK',
-              message: 'Signed IN'
-            })
-          } else {
-            response.json({
-              status: 'FAILED',
-              message: 'AILED TO Signed IN'
-            })
-          }
-        })
+    User.find({ email })
+      .then(result => {
+        if (result.length) {
+          //COMPROBAR CONTRASEÑA:
+          const hashedPassword = result[0].password
+          bcrypt.compare(password, hashedPassword).then(result => {
+            if (result) {
+              response.json({
+                status: 'OK',
+                message: 'Signed IN'
+              })
+            } else {
+              response.json({
+                status: 'FAILED',
+                message: 'AILED TO Signed IN'
+              })
+            }
+          })
 
-        console.log('hashed', hashedPassword)
-      }
-    }).catch(error=>{
-      response.json({
-        status: 'FAILED',
-        message: 'Verirfication failed'
+          console.log('hashed', hashedPassword)
+        }
       })
-    })
+      .catch(error => {
+        response.json({
+          status: 'FAILED',
+          message: 'Verirfication failed'
+        })
+      })
   }
 })
 
