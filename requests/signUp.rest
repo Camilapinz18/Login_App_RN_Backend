@@ -1,0 +1,22 @@
+POST http://localhost:3000/api/users/signup
+Content-Type: application/json
+
+{
+    "name":"Aquiles Baeza",
+    "email":"aquilesb@gmail.com",
+    "password":"miclave12345",
+    "birthDate":"10-18-1996"
+
+}
+
+###
+POST http://localhost:3000/users/signup
+Content-Type: application/json
+
+{
+    "name":"Aquiles Baeza",
+    "email":"aquilesb@gmail.com",
+    "password":"miclave12345",
+    "birthDate":"10-18-1996"
+
+}
