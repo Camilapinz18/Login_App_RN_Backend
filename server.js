@@ -1,11 +1,26 @@
 const express = require('express')
+const mongoose = require('mongoose')
 //Se conecta a la bd:
-require('./config/db')
+//require('./config/db')
 const app = express()
-const PORT = process.env.PORT || 3000
+require('dotenv').config()
+const PORT = process.env.PORT || 3001
 const bcrypt = require('bcrypt')
 const bodyParser = require('express').json()
 app.use(bodyParser)
+
+/******************************* */
+mongoose.set('strictQuery', true)
+
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(result => {
+    console.log('Connected to MongoDb')
+    app.listen(PORT, () => {
+      console.log('Server running on port', PORT)
+    })
+  })
+  .catch(error => console.log(error))
 
 //const userRouter = require('./api/user')
 
@@ -155,8 +170,8 @@ app.post('/api/users/signin', (request, response) => {
 })
 
 /******************************************* */
-app.listen(PORT, () => {
-  console.log('Server running on port', PORT)
-})
+// app.listen(PORT, () => {
+//   console.log('Server running on port', PORT)
+// })
 
 module.exports = app
