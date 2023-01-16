@@ -31,13 +31,6 @@ app.post('/api/users/signup', (request, response) => {
   password = password.trim()
   birthDate = birthDate.trim()
 
-  const newUser = new User({
-    name,
-    email,
-    password,
-    birthDate
-  })
-
   if (name === '' || email === '' || password === '' || birthDate === '') {
     response.json({
       status: 'FAILED',
@@ -104,6 +97,49 @@ app.post('/api/users/signup', (request, response) => {
             })
         })
       }
+    })
+  }
+})
+/*********************************************** */
+
+app.post('/api/users/signin', (request, response) => {
+  //Extrae las propiedades del req.body y crea nuevas variables independientes
+  let { email, password } = request.body
+  //console.log('body', request.body)
+  email = email.trim()
+  password = password.trim()
+
+  if (email === '' || password === '') {
+    response.json({
+      status: 'FAILED',
+      message: 'Empty input fields!'
+    })
+  } else {
+    User.find({ email }).then(result => {
+      if (result.length) {
+        //COMPROBAR CONTRASEÑA:
+        const hashedPassword = result[0].password
+        bcrypt.compare(password, hashedPassword).then(result => {
+          if (result) {
+            response.json({
+              status: 'OK',
+              message: 'Signed IN'
+            })
+          } else {
+            response.json({
+              status: 'FAILED',
+              message: 'AILED TO Signed IN'
+            })
+          }
+        })
+
+        console.log('hashed', hashedPassword)
+      }
+    }).catch(error=>{
+      response.json({
+        status: 'FAILED',
+        message: 'Verirfication failed'
+      })
     })
   }
 })
