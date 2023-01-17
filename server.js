@@ -4,11 +4,12 @@ const mongoose = require('mongoose')
 //require('./config/db')
 const app = express()
 require('dotenv').config()
+var cors = require('cors');
+app.use(cors());
 const PORT = process.env.PORT || 3001
 const bcrypt = require('bcrypt')
-const bodyParser = require('express').json()
-app.use(bodyParser)
-
+app.use(express.urlencoded({extended: true}));
+app.use(express.json());
 /******************************* */
 mongoose.set('strictQuery', true)
 
