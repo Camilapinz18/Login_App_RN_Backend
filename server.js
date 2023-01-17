@@ -53,7 +53,7 @@ app.get('/api/users', (request, response) => {
   })
 })
 
-app.post('/api/poster', (request, response) => {
+app.post('/api/users/signin', (request, response) => {
   let email = request.body.email
   let password = request.body.password
   const body = request.body
@@ -191,50 +191,6 @@ app.post('/api/users/signup', (request, response) => {
   }
 })
 /*********************************************** */
-
-app.post('/api/users/signin', (request, response) => {
-  //Extrae las propiedades del req.body y crea nuevas variables independientes
-  let { email, password } = request.body
-  console.log('body', request.body)
-  email = email.trim()
-  password = password.trim()
-
-  if (email === '' || password === '') {
-    response.json({
-      status: 'FAILED',
-      message: 'Empty input fields!'
-    })
-  } else {
-    User.find({ email })
-      .then(result => {
-        if (result.length) {
-          //COMPROBAR CONTRASEÑA:
-          const hashedPassword = result[0].password
-          bcrypt.compare(password, hashedPassword).then(result => {
-            if (result) {
-              response.json({
-                status: 'OK',
-                message: 'Signed IN'
-              })
-            } else {
-              response.json({
-                status: 'FAILED',
-                message: 'AILED TO Signed IN'
-              })
-            }
-          })
-
-          console.log('hashed', hashedPassword)
-        }
-      })
-      .catch(error => {
-        response.json({
-          status: 'FAILED',
-          message: 'Verirfication failed'
-        })
-      })
-  }
-})
 
 /******************************************* */
 // app.listen(PORT, () => {
