@@ -78,14 +78,14 @@ app.post('/api/users/signin', (request, response) => {
           .compare(password, hashedPassword)
           .then(result => {
             if (result) {
-              response.status(201).json({
+              response.json({
                 status: 'OK',
                 message: 'Signed IN',
                 
               })
               console.log('signed in ok')
             } else {
-              response.status(404).json({
+              response.json({
                 status: 'FAILED',
                 message: 'AILED TO Signed IN'
               })
