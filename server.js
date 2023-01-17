@@ -109,7 +109,8 @@ app.post('/api/users/signup', (request, response) => {
             .then(result => {
               response.json({
                 status: 'OK',
-                message: 'User created!'
+                message: 'User created!',
+                data:result
               })
             })
             .catch(error => {
