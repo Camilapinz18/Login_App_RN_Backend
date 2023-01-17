@@ -137,7 +137,7 @@ app.post('/api/users/signup', (request, response) => {
 app.post('/api/users/signin', (request, response) => {
   //Extrae las propiedades del req.body y crea nuevas variables independientes
   let { email, password } = request.body
-  //console.log('body', request.body)
+  console.log('body', request.body)
   email = email.trim()
   password = password.trim()
 
