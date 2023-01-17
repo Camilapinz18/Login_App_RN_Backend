@@ -56,6 +56,7 @@ app.get('/api/users', (request, response) => {
 
 app.post("/api/poster",(request,response)=>{
   let body = request.body
+  console.log("body",body)
   if(body){
     response.status(201).json(body)
   } else {
