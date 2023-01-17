@@ -54,6 +54,12 @@ app.get('/api/users', (request, response) => {
   })
 })
 
+app.post("/api/poster",(request,response)=>{
+  const data=request.body
+  response.json(data)
+})
+
+
 app.post('/api/users/signup', (request, response) => {
   //Extrae las propiedades del req.body y crea nuevas variables independientes
   let { name, email, password, birthDate } = request.body
