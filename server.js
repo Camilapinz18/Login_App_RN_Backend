@@ -55,8 +55,14 @@ app.get('/api/users', (request, response) => {
 })
 
 app.post("/api/poster",(request,response)=>{
-  let {  email, password } = request.body
-  response.json(email,password)
+  let body = request.body
+  if(body){
+    response.status(201).json(body)
+  } else {
+    response.status(404).end()
+  }
+
+ 
 })
 
 
@@ -69,7 +75,7 @@ app.post('/api/users/signup', (request, response) => {
   birthDate = birthDate.trim()
 
   if (name === '' || email === '' || password === '' || birthDate === '') {
-    response.json({
+    response.status(404).json({
       status: 'FAILED',
       message: 'Empty input fields!'
     })
