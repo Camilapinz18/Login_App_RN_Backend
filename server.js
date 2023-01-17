@@ -55,8 +55,8 @@ app.get('/api/users', (request, response) => {
 })
 
 app.post("/api/poster",(request,response)=>{
-  const data=request.body
-  response.json(data)
+  let { name, email, password, birthDate } = request.body
+  response.json(name,email,password,birthDate)
 })
 
 
