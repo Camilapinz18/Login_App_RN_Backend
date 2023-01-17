@@ -2,14 +2,21 @@ const express = require('express')
 const mongoose = require('mongoose')
 //Se conecta a la bd:
 //require('./config/db')
+const cors = require('cors');
 const app = express()
 require('dotenv').config()
-var cors = require('cors');
+
 app.use(cors());
 const PORT = process.env.PORT || 3001
 const bcrypt = require('bcrypt')
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
+
+/******************** */
+const corsOptions = {
+  origin: '*',
+
+}
 /******************************* */
 mongoose.set('strictQuery', true)
 
