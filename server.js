@@ -2,20 +2,19 @@ const express = require('express')
 const mongoose = require('mongoose')
 //Se conecta a la bd:
 //require('./config/db')
-const cors = require('cors');
+const cors = require('cors')
 const app = express()
 require('dotenv').config()
 
-app.use(cors());
+app.use(cors())
 const PORT = process.env.PORT
 const bcrypt = require('bcrypt')
-app.use(express.urlencoded({extended: true}));
-app.use(express.json());
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
 
 /******************** */
 const corsOptions = {
-  origin: '*',
-
+  origin: '*'
 }
 /******************************* */
 mongoose.set('strictQuery', true)
@@ -54,18 +53,64 @@ app.get('/api/users', (request, response) => {
   })
 })
 
-app.post("/api/poster",(request,response)=>{
-  let body = request.body
-  console.log("body",body)
-  if(body){
-    response.status(201).json(body)
+app.post('/api/poster', (request, response) => {
+  let email = request.body.email
+  let password = request.body.password
+  const body = request.body
+
+  if (email === '' || password === '') {
+    response.status(404).json({
+      status: 'FAILED',
+      message: 'Empty input fields!'
+    })
+  } else if (password.length < 8) {
+    response.json({
+      status: 'FAILED',
+      message: 'Password is too short'
+    })
   } else {
-    response.status(404).end()
+    User.find({ email }).then(result => {
+      console.log('result', result)
+      if (result.length) {
+        const hashedPassword = result[0].password
+        console.log('hashed', hashedPassword)
+        bcrypt
+          .compare(password, hashedPassword)
+          .then(result => {
+            if (result) {
+              response.json({
+                status: 'OK',
+                message: 'Signed IN'
+              })
+              console.log('signed in ok')
+            } else {
+              response.json({
+                status: 'FAILED',
+                message: 'AILED TO Signed IN'
+              })
+              console.log('signed in failed')
+            }
+          })
+          .catch(error => {
+            console.log('error', error)
+            response.json({
+              status: 'FAILED',
+              message: 'Verirfication failed'
+            })
+          })
+      } else {
+        response.json({
+          status: 'FAILED',
+          message: 'User not found'
+        })
+        console.log('User not found')
+      }
+    })
+    //response.status(201).json(body)
   }
 
- 
+  console.log('body', body)
 })
-
 
 app.post('/api/users/signup', (request, response) => {
   //Extrae las propiedades del req.body y crea nuevas variables independientes
@@ -131,7 +176,7 @@ app.post('/api/users/signup', (request, response) => {
               response.json({
                 status: 'OK',
                 message: 'User created!',
-                data:result
+                data: result
               })
             })
             .catch(error => {
