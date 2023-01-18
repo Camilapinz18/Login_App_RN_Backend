@@ -122,7 +122,7 @@ app.post('/api/users/signup', (request, response) => {
   console.log('SERVER:', name, email, birthDate, password)
 
   if (name === '' || email === '' || password === '' || birthDate === '') {
-    response.status(404).json({
+    response.json({
       status: 'FAILED',
       message: 'Empty input fields!'
     })
