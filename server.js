@@ -80,8 +80,7 @@ app.post('/api/users/signin', (request, response) => {
             if (result) {
               response.json({
                 status: 'OK',
-                message: 'Signed IN',
-                
+                message: 'Signed IN'
               })
               console.log('signed in ok')
             } else {
@@ -115,18 +114,63 @@ app.post('/api/users/signin', (request, response) => {
 
 app.post('/api/users/signup', (request, response) => {
   //Extrae las propiedades del req.body y crea nuevas variables independientes
-  let { name, email, password, birthDate } = request.body
-  name = name.trim()
-  email = email.trim()
-  password = password.trim()
-  birthDate = birthDate.trim()
+  let name = request.body.name
+  let email = request.body.email
+  let password = request.body.password
+  let birthDate = request.body.birthDate
+  const body = request.body
+  console.log('SERVER:', name, email, birthDate, password)
 
   if (name === '' || email === '' || password === '' || birthDate === '') {
     response.status(404).json({
       status: 'FAILED',
       message: 'Empty input fields!'
     })
+  } else if (password.length < 8) {
+    response.json({
+      status: 'FAILED',
+      message: 'Password is too short'
+    })
+  } else {
+    User.find({ email }).then(result => {
+      console.log('result', result)
+      if (result.length) {
+        response.json({
+          status: 'FAILED',
+          message: 'The email is already registered'
+        })
+      } else {
+        const saltRounds = 10
+        bcrypt.hash(password, saltRounds).then(hashedPassword => {
+          const newUser = new User({
+            name,
+            email,
+            password: hashedPassword,
+            birthDate
+          })
+          console.log(hashedPassword)
+
+          newUser
+            .save()
+            .then(result => {
+              response.json({
+                status: 'OK',
+                message: 'Sign Up successful',
+                data:result
+              })
+            })
+            .catch(error => {
+              console.log("error",error)
+              response.json({
+                status: 'FAILED',
+                message: 'Error creating a new account'
+              })
+            })
+        })
+      }
+    })
   }
+
   //   } else if (!/[^a-zA-Z]/.test(name)) {
   //     //Verifica si el nombre tiene caracteres distintos a letras
   //     response.json({
@@ -147,49 +191,8 @@ app.post('/api/users/signup', (request, response) => {
   //       message: 'Invalid birth date entered!'
   //     })
   //   }
-  else if (password.length < 8) {
-    response.json({
-      status: 'FAILED',
-      message: 'Password is too short'
-    })
-  } else {
-    User.find({ email }).then(result => {
-      if (result.length) {
-        response.json({
-          status: 'FAILED',
-          message: 'User already exists!'
-        })
-      } else {
-        console.log('no existe, se procede a crear')
-
-        const saltRounds = 10
-        bcrypt.hash(password, saltRounds).then(hashedPassword => {
-          const newUser = new User({
-            name,
-            email,
-            password: hashedPassword,
-            birthDate
-          })
-
-          newUser
-            .save()
-            .then(result => {
-              response.json({
-                status: 'OK',
-                message: 'User created!',
-                data: result
-              })
-            })
-            .catch(error => {
-              response.json({
-                status: 'FAILED',
-                message: 'Error creating a new account'
-              })
-            })
-        })
-      }
-    })
-  }
+  //  
+  // }
 })
 /*********************************************** */
 
